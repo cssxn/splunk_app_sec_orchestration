@@ -1,0 +1,59 @@
+<form>
+  <label>ThreatIntell - Yara Rules</label>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="yara_category">
+      <label>yara_category</label>
+      <fieldForLabel>yara_category</fieldForLabel>
+      <fieldForValue>yara_category</fieldForValue>
+      <search>
+        <query>index=ioc sourcetype=yar* source="/Volumes/Mac_Development/Shared/rules/*"  |  eval sourceparams=split(source,"/") | eval yara_category=mvindex(sourceparams,5)  | eval yara_rule_name=mvindex(sourceparams,6) | stats count by yara_category</query>
+      </search>
+      <choice value="*">All</choice>
+      <default>*</default>
+      <delimiter> </delimiter>
+    </input>
+    <input type="text" token="keyword" searchWhenChanged="true">
+      <label>keyword</label>
+      <default>*Cerberus*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Yara Family Type</title>
+      <chart>
+        <search>
+          <query>index=ioc sourcetype=yar* source="/Volumes/Mac_Development/Shared/rules/*"  |  eval sourceparams=split(source,"/") | eval yara_category=mvindex(sourceparams,5)  | eval yara_rule_name=mvindex(sourceparams,6) | search yara_category="*$yara_category$*" "*$keyword$*"  | stats count by yara_category</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.chart">pie</option>
+      </chart>
+    </panel>
+    <panel>
+      <table>
+        <title>Yara Rule Family - Table</title>
+        <search>
+          <query>index=ioc sourcetype=yar* source="/Volumes/Mac_Development/Shared/rules/*"  |  eval sourceparams=split(source,"/") | eval yara_category=mvindex(sourceparams,5)  | eval yara_rule_name=mvindex(sourceparams,6) | search yara_category="*$yara_category$*" "*$keyword$*" | stats values(yara_rule_name) count by yara_category | RENAME count AS Rules</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <event>
+        <title>Yara Signature</title>
+        <search>
+          <query>index=ioc sourcetype=yar* source="/Volumes/Mac_Development/Shared/rules/*"  |  eval sourceparams=split(source,"/") | eval yara_category=mvindex(sourceparams,5)  | eval yara_rule_name=mvindex(sourceparams,6) | search yara_category="*$yara_category$*" "*$keyword$*"</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="list.drilldown">outer</option>
+        <option name="maxLines">20</option>
+        <option name="raw.drilldown">outer</option>
+        <option name="type">raw</option>
+      </event>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,133 @@
+<form>
+  <label>Internal Log Monitor(temp)</label>
+  <description>Temporary dashboard to monitor for _internal logs, total events and size related querries</description>
+  <fieldset submitButton="false">
+    <input type="time" token="field1">
+      <label></label>
+      <default>
+        <earliest>-7d@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <input type="dropdown" token="split" searchWhenChanged="true">
+        <label>Split by:</label>
+        <choice value="series">series</choice>
+        <choice value="host">Host</choice>
+        <choice value="sourcetype">Sourcetype</choice>
+        <default>series</default>
+      </input>
+      <chart>
+        <title>Timechart of top host</title>
+        <search>
+          <query>index=_internal component=Metrics group=per_index_thruput NOT (series="main" OR series="_*")   | eval mb=kb/1024 | timechart fixedrange=t span=1h sum(mb) by $split$ useother=0 usenull=0| rename sum(mb) as totalMB</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Index, Hosts, Events and Volume Reported</title>
+        <search>
+          <query>index=_internal component=Metrics group=per_index_thruput NOT (series="main" OR series="_*")   | eval mb=kb/1024 | eval gb=mb/1024| stats dc(host)  sum(ev) As "Events" sum(kb) AS "Volume(Kb)" sum(mb) AS "Volume(MB)" by series</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="count">10</option>
+        <drilldown>
+          <condition field="series">
+            <set token="series">$row.series$</set>
+          </condition>
+        </drilldown>
+      </table>
+      <html>
+	<p>
+          <font color="25C2E8">
+            <![CDATA[
+	Click the "Index" name for raw sample events
+	]]>
+          </font>
+        </p>
+
+	</html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <event id="detail_1" depends="$series$">
+        <title>Internal Logs on Index: $series$</title>
+        <search>
+          <query>index=_internal component=Metrics group=per_index_thruput $series$ | table _time,  _raw | highlight series</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">0</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="list.drilldown">none</option>
+        <option name="list.wrap">1</option>
+        <option name="maxLines">0</option>
+        <option name="table.wrap">1</option>
+        <option name="type">raw</option>
+        <option name="raw.drilldown">none</option>
+        <option name="table.drilldown">all</option>
+        <option name="count">15</option>
+        <fields>[]</fields>
+      </event>
+    </panel>
+    <panel>
+      <event id="detail_2" depends="$series$">
+        <title>Detail of Events on Index: $series$</title>
+        <search>
+          <query>search index=$series$ | table _time,  _raw | highlight index</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">0</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="list.drilldown">none</option>
+        <option name="list.wrap">1</option>
+        <option name="maxLines">0</option>
+        <option name="table.wrap">1</option>
+        <option name="type">raw</option>
+        <option name="raw.drilldown">none</option>
+        <option name="table.drilldown">all</option>
+        <option name="count">15</option>
+        <fields>[]</fields>
+      </event>
+    </panel>
+  </row>
+</form>

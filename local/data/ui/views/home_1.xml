@@ -1,0 +1,187 @@
+<dashboard>
+  <label>Home</label>
+  <row>
+    <panel>
+      <html>
+        <strong>
+        <a href="/app/sec_orchestration/reports?tour=cyber_security_app" target="_blank">Click Here for the App Tour</a>
+        </strong>
+    </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <title>MaliciousFiles Analysed</title>
+        <search>
+          <query>(index=cuckoo source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json") OR (index=suricata  sourcetype=pcap source=*eve.json) OR (index=ioc  sourcetype=csv  source="*/malware_samples/thug.csv") OR (index=endpoint) earliest=-150d@d | stats dc(source) AS Analysed</query>
+          <earliest>-24d@d</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="rangeColors">["0x65a637","0x621A4B","0x621A4B"]</option>
+        <option name="rangeValues">[0,100]</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>IOC's</title>
+        <search>
+          <query>index="ioc" sourcetype="csv" (source="*/opt/threat_intell/threat_feeds/*" )  NOT source=*tor.csv | rex field=_raw "^(?P&lt;IP&gt;[^,]+),(?P&lt;ioc_source&gt;\w+)" |  eval sourceparams=split(source,"/") | eval threat_source=mvindex(sourceparams,4)    | stats dc(IP) AS Distinct_IOC</query>
+          <earliest>-2d@d</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="rangeColors">["0x65a637","0x621A4B","0x621A4B"]</option>
+        <option name="rangeValues">[0,70]</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Honeypot Attacks</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | timechart span=24h count | reverse</query>
+          <earliest>-2d@d</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x621A4B","0x621A4B"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">percent</option>
+        <option name="trendInterval">-24h</option>
+        <option name="underLabel">Past 24 Hrs</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>PhishEmails Analysed</title>
+        <search>
+          <query>index="ioc" sourcetype="phishing_csv"  source=*phishing_analysis*.csv NOT ("IP Address"="IP Address")  | stats count AS Email</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="rangeColors">["0x65a637","0x621A4B"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>CrimeFiles Analysed</title>
+        <search>
+          <query>index=suricata  sourcetype=pcap source=*eve.json earliest=-120d@d |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6) | dedup crimename | stats count by crimename _time  | sort - _time  | table crimename | head 10</query>
+          <earliest>-2y@y</earliest>
+          <latest>-5m@m</latest>
+        </search>
+        <drilldown target="blank">
+          <link>
+            <![CDATA[
+          /app/QCyberSecurity/suricata_analysis?form.timestamp.earliest=0&form.timestamp.latest=&form.source=*&form.keyword=*&form.exclude=*twitter.com*%20OR%20*facebook*%20OR%20*google*%20OR%20*bing.com*%20OR%20%20*akamai*&form.crimename=$click.value$
+         ]]>
+          </link>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Files Analysed by Cuckoo</title>
+        <search>
+          <query>index=cuckoo source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" earliest=-90d@d |  eval sourceparams=split(source,"/") | eval analysis_report=mvindex(sourceparams,5)  | RENAME target.file.name AS "FileName" | table FileName | head 10</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <drilldown target="blank">
+          <link>
+            <![CDATA[
+          /app/QCyberSecurity/cuckoo?form.FileName=$click.value$&form.Process=$click.value$
+         ]]>
+          </link>
+        </drilldown>
+      </table>
+      <html>
+        <strong>
+          <div style="color:#621A4B;">Click "FileName" for detailed report</div>
+        </strong>
+    </html>
+    </panel>
+    <panel>
+      <table>
+        <title>Top 10 Malicious IP Address</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*"  | top src limit=10 |  iplocation src | fields src, Country, count | fillnull value=Unknown Country | eval DShield="DShield"</query>
+          <earliest>-2d@d</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Domains Analysed</title>
+        <search>
+          <query>(index=ioc OR index=thug)   sourcetype=csv  source="*malware_samples/*" source="*/malware_samples/thug.csv" | search malicious_md5="*" | table malicious_md5 malicious_url | head 10</query>
+          <earliest>-30d@d</earliest>
+          <latest>now</latest>
+        </search>
+        <drilldown target="blank">
+          <link>
+            <![CDATA[
+          /app/QCyberSecurity/domain_analysis?form.threat_source=$click.value$
+         ]]>
+          </link>
+        </drilldown>
+      </table>
+      <html>
+        <strong>
+          <div style="color:#621A4B;">Click "malicious_md5" for detailed report</div>
+        </strong>
+    </html>
+    </panel>
+    <panel>
+      <table>
+        <title>Phishing Sites Analysed</title>
+        <search>
+          <query>index=ioc sourcetype=phishing_csv  | search online=yes | dedup url | table url,  submission_time | sort -submission_time | head 10</query>
+          <earliest>-2y@y</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="dataOverlayMode">heatmap</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="wordcloud_app.wordcloud">
+        <title>Malware Files Analysed</title>
+        <search>
+          <query>index=suricata  sourcetype=pcap source=*eve.json |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6)  | stats  count by crimename</query>
+          <earliest>-1y@y</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="wordcloud_app.wordcloud.alignmentMode">hovert</option>
+        <option name="wordcloud_app.wordcloud.backgroundColor">#fff</option>
+        <option name="wordcloud_app.wordcloud.colorBy">colorMode</option>
+        <option name="wordcloud_app.wordcloud.colorMode">categorical</option>
+        <option name="wordcloud_app.wordcloud.maxColor">#3fc77a</option>
+        <option name="wordcloud_app.wordcloud.minColor">#d93f3c</option>
+        <option name="wordcloud_app.wordcloud.numOfBins">4</option>
+        <option name="wordcloud_app.wordcloud.splunkTastic">false</option>
+        <option name="wordcloud_app.wordcloud.useColors">true</option>
+      </viz>
+    </panel>
+  </row>
+</dashboard>

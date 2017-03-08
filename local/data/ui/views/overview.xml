@@ -1,0 +1,220 @@
+<form script="single_trend.js">
+  <label>HoneyPot Overview</label>
+  <description>SSH, Malware, Snort and ShockPot HoneyPots</description>
+  <fieldset submitButton="True">
+    <input type="time" token="field1" searchWhenChanged="true">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>Attacks</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | timechart span=24h count | reverse</query>
+          <earliest></earliest>
+          <latest></latest>
+        </search>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x621A4B","0x621A4B"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">inverse</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="trendInterval">-24h</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">1</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="refresh.auto.interval">620</option>
+      </single>
+      <single>
+        <title>Unique Attacks</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | timechart span=4h dc(src) as Unique_Attackers  | reverse</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="rangeColors">["0x621A4B","0x621A4B"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="trendInterval">-24h</option>
+        <option name="useColors">1</option>
+        <option name="refresh.auto.interval">620</option>
+      </single>
+    </panel>
+    <panel>
+      <viz type="viz_timewrap.timewrap">
+        <title>Timeline of Attacks (in UTC)</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | timechart span=1h count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="refresh.auto.interval">620</option>
+        <option name="viz_timewrap.timewrap.axisLabelFormat">"hA"</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <map>
+        <title>Global Attack Map</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | iplocation src | geostats count by src globallimit=20</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="height">504</option>
+        <option name="mapping.map.center">(8.75,66.18)</option>
+        <option name="mapping.map.scrollZoom">1</option>
+        <option name="mapping.map.zoom">3</option>
+        <option name="mapping.tileLayer.maxZoom">5</option>
+        <option name="mapping.tileLayer.minZoom">2</option>
+        <option name="mapping.tileLayer.url">http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png</option>
+        <option name="mapping.type">marker</option>
+        <option name="refresh.auto.interval">620</option>
+      </map>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="viz_donut_c3.c3donut">
+        <title>Top Attacker Countries</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | iplocation src | top Country</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="viz_donut_c3.c3donut.expand">1</option>
+        <option name="viz_donut_c3.c3donut.label_show">1</option>
+        <option name="viz_donut_c3.c3donut.label_value">value</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">true</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">value</option>
+        <option name="viz_donut_c3.c3donut.width">20</option>
+        <option name="refresh.auto.interval">620</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="viz_donut_c3.c3donut">
+        <title>Top Attacker Cities</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | iplocation src | where City!="" | top City</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="viz_donut_c3.c3donut.expand">1</option>
+        <option name="viz_donut_c3.c3donut.label_show">true</option>
+        <option name="viz_donut_c3.c3donut.label_value">value</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">true</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">value</option>
+        <option name="viz_donut_c3.c3donut.width">20</option>
+        <option name="refresh.auto.interval">630</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="viz_donut_c3.c3donut">
+        <title>Top Honeypots by type</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | top type</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="viz_donut_c3.c3donut.expand">1</option>
+        <option name="viz_donut_c3.c3donut.label_show">true</option>
+        <option name="viz_donut_c3.c3donut.label_value">value</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">true</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">value</option>
+        <option name="viz_donut_c3.c3donut.width">30</option>
+        <option name="refresh.auto.interval">630</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="viz_donut_c3.c3donut">
+        <title>Top Ports</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | top dest_port | fields dest_port, count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="viz_donut_c3.c3donut.expand">1</option>
+        <option name="viz_donut_c3.c3donut.label_show">1</option>
+        <option name="viz_donut_c3.c3donut.label_value">value</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">ratio</option>
+        <option name="viz_donut_c3.c3donut.width">30</option>
+        <option name="refresh.auto.interval">630</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Top Attackers</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" | rename event.* as * | rex field=src mode=sed s/::ffff:// | iplocation src  | chart sparkline as Sparkline, count by src | rename src as Source | sort 10 -count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">row</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+        <option name="refresh.auto.interval">640</option>
+        <drilldown>
+          <condition field="DShield">
+            <link>
+              <![CDATA[
+                      https://www.dshield.org/ipinfo.html?ip=$row.src$
+                  ]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Top Signatures</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" |  top signature | fields signature, count</query>
+          <earliest>$field1.earliest$</earliest>
+          <latest>$field1.latest$</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <option name="refresh.auto.interval">640</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Last Updated</title>
+        <search>
+          <query>index=honeypot  | eval hourAndMinuteOffset=split(strftime(_time, "%k:%M"),":") | eval hourOffset=mvindex(hourAndMinuteOffset,0) | eval minuteOffset=mvindex(hourAndMinuteOffset,1) | eval hourOffset=24-hourOffset | eval offsetSeconds=hourOffset*60 + minuteOffset  | eval time_splunk=strftime(_time, "%A, %B %e, %Y %l:%M:%S.%3Q %p %Z (%:z)") | eval time_offset=strftime(_time, "%:z") | rex field=time_offset ".(?&lt;time_offset_seconds&gt;\d{2}:\d{2})" | eval time_offset_seconds=time_offset_seconds.":00" | convert dur2sec(time_offset_seconds) | eval time_utc_epoch=strftime(_time, "%s") | convert num(time_utc_epoch) | eval time_utc_epoch=if(time_offset_seconds==0, time_utc_epoch, if(substr(time_offset, 1, 1)=="+", time_utc_epoch-time_offset_seconds, time_utc_epoch+time_offset_seconds)) | eval Time_in_UTC=strftime(time_utc_epoch, "%A, %B %e, %Y %l:%M:%S.%3Q %p UTC (-00:00)") | eval time=_time-offsetSeconds  | eval Time_in_AEST=strftime(_indextime,"%Y-%m-%d %H:%M:%S AEST") | table Time_in_AEST Time_in_UTC | sort - Time_in_AEST | head 1</query>
+          <earliest>-48h@h</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+</form>

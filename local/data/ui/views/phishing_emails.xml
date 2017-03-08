@@ -1,0 +1,114 @@
+<form>
+  <label>PhishEmails</label>
+  <description>Phishing Email Analysis</description>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="time" token="timestamp" searchWhenChanged="true">
+      <label>Time picker</label>
+      <default>
+        <earliest>0</earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="multiselect" token="crimename">
+      <label>Crime Name</label>
+      <choice value="*">All_CRIME</choice>
+      <search>
+        <query>index=email  sourcetype=_json source=*email.json |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6)  | stats count by crimename</query>
+        <earliest>-90d@d</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>crimename</fieldForLabel>
+      <fieldForValue>crimename</fieldForValue>
+      <delimiter> </delimiter>
+      <default>Prem_Phish_emails</default>
+    </input>
+    <input type="text" token="keyword">
+      <label>Include</label>
+      <default>*</default>
+    </input>
+    <input type="text" token="exclude">
+      <label>Exclude</label>
+      <default>*twitter.com* OR *facebook* OR *google* OR *bing.com* OR  *akamai*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>Sequence of Email</title>
+        <search>
+          <query>index=email source="/Volumes/Mac_Development/Shared/network_traffic_analysis/CRIME/$crimename$/*" | iplocation ip  | eval Time = strptime(datetime,"%Y-%m-%d %H:%M:%S.%l") | bin Time span=1h as Mins | bin datetime span=20m | chart count by datetime</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">-90</option>
+        <option name="charting.axisLabelsY.majorUnit">1</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.text">Emails</option>
+        <option name="charting.axisY.minimumNumber">0</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisEnd</option>
+        <option name="charting.legend.placement">none</option>
+      </chart>
+    </panel>
+    <panel>
+      <viz type="parallel_coordinates_app.parallel_coordinates">
+        <title>Flow of events</title>
+        <search>
+          <query>index=email source="/Volumes/Mac_Development/Shared/network_traffic_analysis/CRIME/$crimename$/*" | iplocation ip | table  ip from{}.email to{}.email</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Email contents</title>
+        <search>
+          <query>index=email source="/Volumes/Mac_Development/Shared/network_traffic_analysis/CRIME/$crimename$/*" | iplocation ip | table headers.date ip Country Region from{}.email from{}.name  headers.from headers.subject headers.received headers.return-path</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="count">25</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Message Content</title>
+        <search>
+          <query>index=email source="/Volumes/Mac_Development/Shared/network_traffic_analysis/CRIME/$crimename$/*" | iplocation ip | table parts{}.content</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rowNumbers">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <map>
+        <title>Location Tracker</title>
+        <search>
+          <query>index=email source="/Volumes/Mac_Development/Shared/network_traffic_analysis/CRIME/$crimename$/*"| iplocation ip   | geostats latfield=lat longfield=lon count  by ip globallimit=0</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="height">591</option>
+        <option name="mapping.map.center">(5.35,18.28)</option>
+        <option name="mapping.map.zoom">3</option>
+        <option name="mapping.tileLayer.maxZoom">3</option>
+        <option name="mapping.tileLayer.url">http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png</option>
+        <option name="mapping.type">marker</option>
+      </map>
+    </panel>
+  </row>
+</form>

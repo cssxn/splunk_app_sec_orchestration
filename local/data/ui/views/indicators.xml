@@ -1,0 +1,108 @@
+<form>
+  <label>Indicators</label>
+  <fieldset submitButton="false">
+    <input type="time" token="time_range">
+      <label></label>
+      <default>
+        <earliest>-2d@h</earliest>
+        <latest>-8h@h</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <input type="dropdown" token="type_tok">
+        <label>Graph Type</label>
+        <default>attack</default>
+        <choice value="attack">attack</choice>
+        <choice value="eventtype">eventtype</choice>
+        <choice value="Country">Country</choice>
+        <choice value="City">City</choice>
+        <choice value="src">src</choice>
+      </input>
+      <chart>
+        <title>Timeline of honeypot activities by Location</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*"  | iplocation src | strcat src " / " Country " / " eventtype attack | timechart count by $type_tok$ usenull=f useother=f</query>
+          <earliest>$time_range.earliest$</earliest>
+          <latest>$time_range.latest$</latest>
+        </search>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.legend.placement">bottom</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>IOC by Sensor Location</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" |  iplocation src | fields sensor src eventtype app signature Country  | fillnull value=Unknown eventtype app signature Country  | stats values(eventtype) AS capturing_sensors dc(eventtype) AS unique_sensors sparkline count by src Country app | eval capturing_sensors=mvjoin(capturing_sensors, " , ")  | eval DShield="DShield"  | sort - count  | head 100</query>
+          <earliest>$time_range.earliest$</earliest>
+          <latest>$time_range.latest$</latest>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">heatmap</option>
+        <drilldown>
+          <condition field="DShield">
+            <link>
+              <![CDATA[
+                      https://www.dshield.org/ipinfo.html?ip=$row.src$
+                  ]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Top MD5s Captured</title>
+        <search>
+          <query>index=honeypot  source="*mhn-splunk.log*" md5=* | top md5 limit=50 | fields md5, count | eval VirusTotal="VirusTotal" | eval TotalHash="TotalHash"</query>
+          <earliest>$time_range.earliest$</earliest>
+          <latest>$time_range.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">50</option>
+        <drilldown>
+          <condition field="VirusTotal">
+            <link>
+              <![CDATA[
+                      https://www.virustotal.com/latest-scan/$row.md5$
+                  ]]>
+            </link>
+          </condition>
+          <condition field="TotalHash">
+            <link>
+              <![CDATA[
+                      http://totalhash.com/search/hash:$row.md5$
+                  ]]>
+            </link>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Top URLs Captured</title>
+        <search>
+          <query>index=honeypot source="*mhn-splunk.log*" (type=dionaea.capture OR type=kippo.sessions) url=* | top url limit=50 | fields url, count</query>
+          <earliest>$time_range.earliest$</earliest>
+          <latest>$time_range.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">50</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,142 @@
+<form>
+  <label>Noriben Sandbox</label>
+  <description>Noriben Outputs</description>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="dropdown" token="file_name" searchWhenChanged="false">
+      <label>file_name</label>
+      <default>Noriben_12_Dec_16__21_44_44_523000_timeline.csv</default>
+      <fieldForLabel>file_name</fieldForLabel>
+      <fieldForValue>file_name</fieldForValue>
+      <search>
+        <query>index=endpoint host=noriben source="*_timeline.csv" |  eval sourceparams=split(source,"/") | eval file_name=mvindex(sourceparams,9) | search  (file_name="Noriben_*" NOT file_name="Noriben_Outputs")</query>
+        <earliest>-60d@d</earliest>
+        <latest>now</latest>
+      </search>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>Timeline - Process</title>
+        <search>
+          <query>index=endpoint host=noriben source="*$file_name$" |  eval sourceparams=split(source,"/") | eval file_name=mvindex(sourceparams,4)  | rex field=_raw "^(?P&lt;Time_of_the_day&gt;\d+:\d+:\d+),(?P&lt;Category&gt;\w+),(?P&lt;Function&gt;\w+),(?P&lt;Executable&gt;[^,]+),(?P&lt;PID&gt;[^,]+),(?P&lt;Path&gt;.*)" | strcat date_hour ":" date_minute ":" date_second Time| RENAME 1__time AS log_time | bucket log_time span=5m | fieldformat log_time=strftime(log_time, "%H:%M:%S")   | chart  count over Time_of_the_day  by Executable</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">90</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.chart">area</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisEnd</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="height">444</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Function</title>
+      <viz type="viz_donut_c3.c3donut">
+        <search>
+          <query>index=endpoint host=noriben source="*$file_name$" |  eval sourceparams=split(source,"/") | eval file_name=mvindex(sourceparams,4)  | rex field=_raw "^(?P&lt;Time_of_the_day&gt;\d+:\d+:\d+),(?P&lt;Category&gt;\w+),(?P&lt;Function&gt;\w+),(?P&lt;Executable&gt;[^,]+),(?P&lt;PID&gt;[^,]+),(?P&lt;Path&gt;.*)" | stats count by Function | RENAME count as function</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="height">479</option>
+        <option name="viz_donut_c3.c3donut.expand">1</option>
+        <option name="viz_donut_c3.c3donut.label_format">%</option>
+        <option name="viz_donut_c3.c3donut.label_show">1</option>
+        <option name="viz_donut_c3.c3donut.label_threshold">0.05</option>
+        <option name="viz_donut_c3.c3donut.label_value">ratio</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_format">%</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">value</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Timeline of Events</title>
+      <chart>
+        <search>
+          <query>index=endpoint host=noriben source="*$file_name$" |  eval sourceparams=split(source,"/") | eval file_name=mvindex(sourceparams,4) | search source="*$file_name$*" | rex field=_raw "^(?P&lt;Time_of_the_day&gt;\d+:\d+:\d+),(?P&lt;Category&gt;\w+),(?P&lt;Function&gt;\w+),(?P&lt;Executable&gt;[^,]+),(?P&lt;PID&gt;[^,]+),(?P&lt;Path&gt;.*)"  |  eval sourceparams=split(source,"/") | eval file_name=mvindex(sourceparams,4)  | strcat date_hour ":" date_minute ":" date_second Time | search Category=*  |strcat Executable "--&gt;" Function   File_action | chart  count over Time_of_the_day by File_action usenull=f useother=f</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.overlayFields">Process--&gt;CreateProcess---&gt;csrss.exe</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisEnd</option>
+        <option name="charting.legend.placement">top</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Timeline</title>
+      <table>
+        <search>
+          <query>index=endpoint host=noriben source="*$file_name$" |  eval sourceparams=split(source,"/") | eval file_name=mvindex(sourceparams,4) | search source="*$file_name$*" | rex field=_raw "^(?P&lt;Time_of_the_day&gt;\d+:\d+:\d+),(?P&lt;Category&gt;\w+),(?P&lt;Function&gt;\w+),(?P&lt;Executable&gt;[^,]+),(?P&lt;PID&gt;[^,]+),(?P&lt;Path&gt;.*)" | table _time,  Time_of_the_day, Category, Function, Executable, PID, Path</query>
+          <earliest>-30d@d</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">50</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+        <format type="color" field="Category">
+          <colorPalette type="map">{"File":#6DB7C6,"Registry":#F7BC38,"Process":#AFEEEE}</colorPalette>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Malware Activity</title>
+      <event>
+        <search>
+          <query>index="noriben" sourcetype="Noriben_Text" host="noriben"</query>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <option name="list.drilldown">full</option>
+        <option name="list.wrap">0</option>
+        <option name="maxLines">5</option>
+        <option name="raw.drilldown">full</option>
+        <option name="rowNumbers">0</option>
+        <option name="table.drilldown">all</option>
+        <option name="table.sortDirection">asc</option>
+        <option name="table.wrap">0</option>
+        <option name="type">raw</option>
+      </event>
+    </panel>
+  </row>
+</form>

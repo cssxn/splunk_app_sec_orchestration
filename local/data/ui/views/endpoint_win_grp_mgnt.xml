@@ -1,0 +1,96 @@
+<form>
+  <label>Windows - Group Management</label>
+  <description>Windows Group Management</description>
+  <fieldset submitButton="false">
+    <input type="time" token="global_time" searchWhenChanged="true">
+      <label>Select Time Window</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Security Enabled Global Group Members Added</title>
+        <search>
+          <query>(index=windows)   ( CategoryString="Account Management" OR TaskCategory="Security Group Management" ) (Message="Security Enabled*" OR Message="A member was added to a*") ( EventCode=632 OR EventCode=4728)  | eval caller = if(isnull(Account_Name), Caller_User_Name, mvindex(Account_Name,0)) | eval member = if(isnull(Account_Name), Member_Name, mvindex(Account_Name,1)) | eval group = if(isnull(Target_Account_Name), Group_Name, Target_Account_Name)  | table _time caller member group | rename _time AS Time member AS Username group AS Group caller AS "Action by" | convert timeformat="%H:%M:%S %d.%m.%Y." ctime(Time)</query>
+          <earliest>$global_time.earliest$</earliest>
+          <latest>$global_time.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">15</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Security Enabled Universal Group Members Added</title>
+        <search>
+          <query>(index=windows)  ( CategoryString="Account Management" OR TaskCategory="Security Group Management" ) (Message="Security Enabled*" OR Message="A member was added to a*") ( EventCode=660 OR EventCode=4756 ) | eval caller = if(isnull(Account_Name), Caller_User_Name, mvindex(Account_Name,0)) | eval member = if(isnull(Account_Name), Member_Name, mvindex(Account_Name,1)) | eval group = if(isnull(Target_Account_ID), mvindex(Account_Name,2), Target_Account_Name)  | table _time caller member group | rename _time AS Time member AS Username group AS Group caller AS "Action by" | convert timeformat="%H:%M:%S %d.%m.%Y." ctime(Time)</query>
+          <earliest>$global_time.earliest$</earliest>
+          <latest>$global_time.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">15</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Security Enabled Local Group Members Added</title>
+        <search>
+          <query>(index=windows) ( CategoryString="Account Management" OR TaskCategory="Security Group Management" ) (Message="Security Enabled*" OR Message="A member was added to a*") ( EventCode=636 OR EventCode=4732 ) | eval Member_Name = if(Member_Name == "-", Member_ID, Member_Name) | eval caller = if(isnull(Account_Name), Caller_User_Name, mvindex(Account_Name,0)) | eval member = if(isnull(Account_Name), Member_Name, mvindex(Account_Name,1)) | eval group = if(isnull(Group_Name),Target_Account_Name,Group_Name) | eval domain = if(Target_Domain == "Builtin", ComputerName, Target_Domain) | table _time caller member group domain | rename _time AS Time member AS Username group AS Group caller AS "Action by" domain AS "Destination domain/server" | convert timeformat="%H:%M:%S %d.%m.%Y." ctime(Time)</query>
+          <earliest>$global_time.earliest$</earliest>
+          <latest>$global_time.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">15</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>New created groups</title>
+        <search>
+          <query>(index=windows) EventCode=631 OR EventCode=4727 OR EventCode=635 OR EventCode=4731 OR EventCode=658 OR EventCode=4754 | rex field=Message "(?&lt;msg&gt;[^\.:]+)" | eval new_grp = if(isnotnull(Account_Name), Group_Name, New_Account_Name) | eval creator = if(isnotnull(Account_Name), Account_Name, Caller_User_Name)  | table _time creator new_grp msg | rename _time AS Time creator AS "Group created by" new_grp AS "Created group" msg AS "Reason/Type" | convert timeformat="%H:%M:%S %d.%m.%Y." ctime(Time)</query>
+          <earliest>$global_time.earliest$</earliest>
+          <latest>$global_time.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">true</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">15</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Deleted Groups</title>
+        <search>
+          <query>(index=windows) EventCode=662 OR EventCode=4758 OR EventCode=638 OR EventCode=4734 OR EventCode=634 OR EventCode=477 | rex field=Message "(?&lt;msg&gt;[^\.:]+)" | eval del_grp = if(isnotnull(Account_Name), Group_Name, Target_Account_Name) | eval deletedby = if(isnotnull(Account_Name), Account_Name, Caller_User_Name)  | table _time deletedby del_grp msg | rename _time AS Time deletedby AS "Group deleted by" del_grp AS "Deleted group" msg AS "Reason/Type" | convert timeformat="%H:%M:%S %d.%m.%Y." ctime(Time)</query>
+          <earliest>$global_time.earliest$</earliest>
+          <latest>$global_time.latest$</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+      </table>
+    </panel>
+  </row>
+</form>

@@ -1,0 +1,23 @@
+<nav search_view="search" color="#E5323E">
+  <view name="summary"  />
+  <view name="search" default='true' />
+    <collection label="Administrative">
+  		<view name="internal_log_monitortemp" />
+      <view name="User_Activity_Monitor" />
+   	</collection>
+  <collection label="Infrastructure">
+  		<view name="" />
+	</collection>
+    <collection label="Utilities">
+  		<view name="cim_dictionary" />
+  		<view name="mac_lookup" />
+      <view name="slideshow_setup" />
+      
+	</collection>
+  <collection label="SystemInfo">
+  <view name="data_models" />
+  <view name="reports" />
+  <view name="alerts" />
+  <view name="dashboards" />
+  </collection>
+</nav>

@@ -1,0 +1,337 @@
+<form script="autodiscover.js">
+  <label>Cuckoo Sandbox</label>
+  <description>Cuckoo - Host analysis</description>
+  <search id="First_Base_Search">
+    <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json")  target.file.name="$FileName$"  | fields info.id info.category info.started info.ended info.duration info.version info.package malscore</query>
+  </search>
+  <fieldset autoRun="false" submitButton="false">
+    <input type="dropdown" token="FileName">
+      <label>Analysis File Name</label>
+      <default>6669.js</default>
+      <fieldForLabel>FileName</fieldForLabel>
+      <fieldForValue>FileName</fieldForValue>
+      <search>
+        <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") | head 15 |  eval sourceparams=split(source,"/") | eval analysis_report=mvindex(sourceparams,5) | search target.file.name=* | RENAME target.file.name AS "FileName" | table analysis_report source FileName</query>
+        <earliest>-30d@d</earliest>
+        <latest>-3m@m</latest>
+      </search>
+      <choice value="6669.js">6669.js</choice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <title>Report ID</title>
+      <single>
+        <search base="First_Base_Search">
+          <query>| table info.id</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="linkFields">underlabel, afterlabel</option>
+        <option name="linkView">YourSecondDashboard</option>
+      </single>
+    </panel>
+    <panel>
+      <title>Category</title>
+      <single>
+        <search base="First_Base_Search">
+          <query>| table info.category</query>
+        </search>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Package</title>
+        <search base="First_Base_Search">
+          <query>|table info.package</query>
+        </search>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Malscore</title>
+        <search base="First_Base_Search">
+          <query>|table malscore</query>
+        </search>
+        <option name="rangeColors">["0x65a637","0xf7bc38","0xd93f3c","0xd93f3c","0xd93f3c"]</option>
+        <option name="rangeValues">[0,5,10,100]</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <single>
+        <title>Started Time</title>
+        <search base="First_Base_Search">
+          <query>| table info.started</query>
+        </search>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Completed Time</title>
+        <search base="First_Base_Search">
+          <query>|table info.ended</query>
+        </search>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Duration</title>
+        <search base="First_Base_Search">
+          <query>|table info.duration</query>
+        </search>
+        <option name="underLabel">Seconds</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>File Details (File Indicators)</b>
+           </font>
+         </h2>
+       </center>
+      
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table id="panel1">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | fields target.file.name target.file.size target.file.type target.file.guest_paths target.file.crc32 target.file.md5 target.file.sha1 target.file.sha256 target.file.sha512 target.file.ssdeep static.peid_signatures{} virustotal.scan_date virustotal.permalink virustotal.positives  virustotal.total  | strcat virustotal.positives "/" virustotal.total Detection_rate | head 1 | table target.file.name target.file.size target.file.type target.file.guest_paths target.file.crc32 target.file.md5 target.file.sha1 target.file.sha256 target.file.sha512 target.file.ssdeep static.peid_signatures{} virustotal.scan_date virustotal.permalink Detection_rate  | transpose</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="count">13</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>Signatures Matched</b>
+           </font>
+         </h2>
+       </center>
+       
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table id="panel2">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$"  | RENAME signatures{}.name AS Signature | RENAME signatures{}.description AS Description | table Signature Description  | head 1</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <format type="color" field="Description">
+          <colorPalette type="map">{"Drops a binary and executes it":#F7BC38,
+            "Deletes its original binary from disk":#F7BC38,
+            "File has been identified by at least ten Antiviruses on VirusTotal as malicious":#F7BC38,
+            "Attempts to modify proxy settings":#F7BC38,
+            "Creates a copy of itself":#F7BC38}</colorPalette>
+        </format>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table id="panel3">
+        <title>AV Detections</title>
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | table virustotal.results{}.vendor virustotal.results{}.sig | RENAME virustotal.results{}.vendor AS AV_Vendor | RENAME virustotal.results{}.sig AS AV_Detection_Signature  | head 1</query>
+          <earliest>@y</earliest>
+          <latest>now</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>Dropped Files</b>
+           </font>
+         </h2>
+       </center>
+       
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Dropped Files - files created or deleted by the malware</title>
+      <table id="panel4">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$"  | table  dropped{}.name dropped{}.type dropped{}.path dropped{}.guest_paths{} dropped{}.sha256 dropped{}.md5  dropped{}.ssdeep dropped{}.clamav dropped{}.Yara{} | transpose</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>Network Analysis</b>
+           </font>
+         </h2>
+       </center>
+  
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Host Involved</title>
+      <table id="panel5">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | spath | table network.hosts{}.ip network.hosts{}.name network.hosts{}.country_name network.hosts{}.inaddrarpa  | head 1</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <title>DNS Request</title>
+      <table id="panel6">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | spath | table network.dns{}.request network.dns{}.type network.dns{}.response  | head 1</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <title>HTTP Requests</title>
+      <table id="panel7">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$"  | spath | table network.domains{}.domain network.domains{}.ip  | head 1</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Network Connections</title>
+      <table id="panel8">
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | spath | table network.udp{}.src network.udp{}.dst network.udp{}.sport network.udp{}.dport  | head 1</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>Behaviour Summary</b>
+           </font>
+         </h2>
+       </center>
+
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table id="panel9">
+        <title>Mutexes</title>
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$"| spath  | RENAME behavior.summary.mutexes{} AS mutexes_Summary | dedup mutexes_Summary | table mutexes_Summary</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+      <table id="panel10">
+        <title>Deleted Files</title>
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | spath | RENAME behavior.summary.delete_files{} AS delete_files_Summary | dedup delete_files_Summary | table delete_files_Summary</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+      <table id="panel11">
+        <title>Deleted Keys</title>
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | spath | RENAME behavior.summary.delete_keys{} AS delete_keys_Summary | dedup delete_keys_Summary | table delete_keys_Summary</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+      <table id="panel12">
+        <title>Started Services</title>
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$" | spath | RENAME behavior.summary.started_services{} AS started_services_Summary | dedup started_services_Summary | table started_services_Summary</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+      <table id="panel13">
+        <title>Executed Commands</title>
+        <search>
+          <query>index=cuckoo (source="/Volumes/Mac_Development/Shared/Cuckoo/*/reports/report.json" OR source="/Volumes/Transcend/cuckoo_reports/*/reports/report.json") target.file.name="$FileName$"  | RENAME behavior.summary.executed_commands{} AS executed_commands_Summary | table executed_commands_Summary  | head 1</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Process Dumps (Click for detailed process information)</title>
+      <input type="text" token="info.id" searchWhenChanged="false">
+        <label>info.id</label>
+        <default>9</default>
+      </input>
+      <table>
+        
+        <search>
+          <query>index="cuckoo" sourcetype="cuckoo_csv"  (source="/Volumes/Macintosh HD/Volumes/Mac_Development/Shared/Cuckoo/$info.id$/logs/*.csv" OR source="/Volumes/Transcend/cuckoo_reports/$info.id$/logs/*.csv") |  eval sourceparams=split(source,"/") | eval PID=mvindex(sourceparams,9)  | eval info.id=mvindex(sourceparams,7)  | dedup source | table info.id 2_PID 3_Executable</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="drilldown">cell</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Processes Activity</title>
+   
+      <chart id="panel14">
+        <search>
+          <query>index="cuckoo" sourcetype="cuckoo_csv"  (source="/Volumes/Macintosh HD/Volumes/Mac_Development/Shared/Cuckoo/$info.id$/logs/*.csv" OR source="/Volumes/Transcend/cuckoo_reports/$info.id$/logs/*.csv") | strcat date_hour ":" date_minute ":" date_second Time   |strcat 3_Executable " Performs " 9_Return " Activity"  Action  | chart  count over Time by Action usenull=f useother=f</query>
+          <earliest>$earliest$</earliest>
+          <latest>$latest$</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">-45</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisEnd</option>
+        <option name="charting.legend.placement">top</option>
+      </chart>
+    </panel>
+  </row>
+</form>

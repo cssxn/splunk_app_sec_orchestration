@@ -1,0 +1,75 @@
+<nav search_view="search" color="#0BBFF5">
+  <view name="home_1"  />
+  <view name="search"  default='true' />
+    
+   <collection label="ThreatIntell">
+  <view name="threat_intell_ioc_Search" />
+
+     <view name="status_overview" />
+  </collection>
+
+        <collection label="NW-MalAnalysis">
+<view name="suricata_analysis" /> 
+  <view name="domain_analysis" />
+  <view name="CRIME_FILES" /> 
+  </collection>
+  
+ <view name="phishing_emails" />
+   
+
+  
+      <collection label="Endpoint">
+ <view name="cuckoo" />
+<view name="endpoint__noriben" /> 
+  <view name="endpoint_windows_account_mgnt" /> 
+        <view name="endpoint_windows_account_mgnt" /> 
+        <view name="endpoint_win_auth" /> 
+        <view name="endpoint_win_grp_mgnt" /> 
+  </collection>
+  
+  <collection label="Memory">
+ <view name="memory_analysis" />
+  </collection>
+ 
+   <collection label="Rules">
+<view name="host_ioc_yara" /> 
+     <view name="ids_rules" /> 
+  </collection>
+  
+      <collection label="HoneyPots">
+      <view name="overview" />
+    <view name="indicators" />
+    <view name="dionaea_analytics" />
+    <view name="kippo_analytics" />
+    <view name="snortsuricata_analytics" />
+    <view name="shockpot_analytics" />
+    <view name="conpot_analytics" />
+    <a href="http://139.59.231.148:3000" target="_blank">Honey Map</a>
+    </collection>
+  
+    <view name="jira-dfir" />
+  
+ <collection label="Docs">
+   
+   <a href="brainfold-mac.com:8001/en-GB/app/QCyberSecurity/reports/tour=cyber_security_app" target="_blank">App Tour</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/Noriben+Sandbox" target="_blank">HowTo - Noriben Sandbox</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/Cuckoo+Analysis" target="_blank">HowTo - Cuckoo Sandbox</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/Threat+Intellegence" target="_blank">HowTo - Threat Intellegence</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/Analyzing+Phishing+Email" target="_blank">HowTo - Phishing Emails</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/Office+Documents+Analysis" target="_blank">HowTo - OfficeDoc Analysis</a>
+   <a href="https://brainfold.atlassian.net/wiki/display/RN/Network+Malware+Analysis" target="_blank">HowTo - NetworkTraffic Analysis</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/JSDetox+JavaScript" target="_blank">HowTo - JavaScript Analysis</a>
+  <a href="https://brainfold.atlassian.net/wiki/display/RN/PDF+Analysis+Tool" target="_blank">HowTo - PDF Analysis</a>
+  <a href="https://brainfold.atlassian.net/wiki/pages/viewpage.action?pageId=32798" target="_blank">HowTo - URL/Domain Analysis</a>
+  <a href="https://brainfold.atlassian.net/wiki/pages/viewpage.action?pageId=32802" target="_blank">HowTo - StaticAnalysis Framework</a>
+  </collection>
+
+  
+  <collection label="SysInfo">
+
+  <view name="data_models" />
+  <view name="reports" />
+  <view name="alerts" />
+  <view name="dashboards" />
+  </collection>
+</nav>

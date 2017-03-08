@@ -1,0 +1,322 @@
+<form script="autodiscover.js">
+  <label>CRIME Files</label>
+  <description>Splunk Dashboard for Suricata IDS Events</description>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="time" token="timestamp" searchWhenChanged="true">
+      <label>Time picker</label>
+      <default>
+        <earliest>0</earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="multiselect" token="eventtype_tok" searchWhenChanged="false">
+      <label>eventtype</label>
+      <choice value="*">All_CRIME</choice>
+      <search>
+        <query>index=suricata tag=* earliest=-15mon@mon | dedup eventtype  | stats count by eventtype  | table eventtype</query>
+        <earliest>@y</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>eventtype</fieldForLabel>
+      <fieldForValue>eventtype</fieldForValue>
+      <prefix>eventtype="</prefix>
+      <valueSuffix>"</valueSuffix>
+      <delimiter>AND eventtype=" </delimiter>
+    </input>
+    <input type="text" token="exclude">
+      <label>Exclude</label>
+      <default>*twitter.com* OR *facebook* OR *google* OR *bing.com* OR  *akamai*</default>
+    </input>
+    <input type="text" token="token_raw_keyword_query" searchWhenChanged="true">
+      <label>Raw query</label>
+      <default>*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Compromise Mechanism</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$ sourcetype=pcap  tag::http.hostname="Comprimised_Site"  | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0 | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Gate</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$  tag::http.hostname="gate"  | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0 | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>EK Landing Page</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$ sourcetype=pcap  tag::http.hostname="*Landing_Page*" | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0 | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Post-Infection-Traffic</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$ sourcetype=pcap  tag::http.hostname="*Post_Infection_Traffic*"  | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0   | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>HTTP And File Details</title>
+      <table id="panel1">
+        <title>HTTP REQUESTs</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$ |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6) | stats count by http.hostname | table http.hostname</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table id="panel2">
+        <title>File Types</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$ $token_raw_keyword_query$| stats count by http.http_content_type | table http.http_content_type</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <html>
+      <div id="slider1" class="splunk-view" data-require="app/custom_simplexml_extensions/components/slidepanel/slidepanelgroup" data-options="{           &quot;items&quot;: [&quot;panel1&quot;, &quot;panel2&quot;, &quot;panel3&quot;],                    &quot;hide&quot;: &quot;yes&quot;              }"/>
+    </html>
+      <table id="panel3">
+        <title>FILE's DOWNLOADED</title>
+        <search>
+          <query>index="suricata"  $eventtype_tok$ $token_raw_keyword_query$ NOT  fileinfo.filename="/" |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6) | stats sum(fileinfo.size) by fileinfo.filename | table fileinfo.filename</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>HTTP USERAGENT</title>
+      <html>
+      <div id="slider2" class="splunk-view" data-require="app/custom_simplexml_extensions/components/slidepanel/slidepanelgroup" data-options="{&quot;items&quot;: [&quot;panel4&quot;]}"/>
+    </html>
+      <table id="panel4">
+        <search>
+          <query>index="suricata"  $eventtype_tok$ $token_raw_keyword_query$ |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6) | stats count by http.http_user_agent | table http.http_user_agent</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Detailed Analysis of related Crime Files</title>
+      <html>
+      <div id="slider3" class="splunk-view" data-require="app/custom_simplexml_extensions/components/slidepanel/slidepanelgroup" data-options="{&quot;items&quot;: [&quot;panel5&quot;]}"/>
+    </html>
+      <table id="panel5">
+        <search>
+          <query>index="suricata"  $eventtype_tok$ $token_raw_keyword_query$ |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6) | stats count by crimename | table crimename</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">20</option>
+        <drilldown target="blank">
+          <link>
+            <![CDATA[
+          /app/QCyberSecurity/suricata_analysis?form.timestamp.earliest=0&form.timestamp.latest=&form.source=*&form.keyword=*&form.exclude=*twitter.com*%20OR%20*facebook*%20OR%20*google*%20OR%20*bing.com*%20OR%20%20*akamai*&form.crimename=$click.value$
+         ]]>
+          </link>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Definitions</title>
+      <html>        
+       <left>
+         <h2 style="background-color:white">
+           <font size="2" color="black">
+          <p>Generally speaking, <strong>
+                  <u>
+                    <font color="#621A4B">criminal groups</font>
+                  </u>
+                </strong> use two methods for widespread distribution of malware. The most common method is <strong>
+                  <u>
+                    <font color="#621A4B">malicious spam (malspam)</font>
+                  </u>
+                </strong>. This is a fairly direct mechanism, usually through an email attachment or a link in the message to the malware. However, malspam requires some sort of action by the user to be successful (for example, opening an attached file).</p>
+
+<p>The other method for widespread malware distribution is an <strong>
+                  <u>
+                    <font color="#621A4B">exploit kit (EK)</font>
+                  </u>
+                </strong>. EKs are designed to work behind the scenes while a potential victim is browsing the web. An EK does not require any additional action by the end user.</p>
+
+<p>EKs are a sophisticated delivery method. Malware distribution through an EK involves other components in the chain of events that lead to a malware infection.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Exploit Kits</font>
+                  </u>
+                </strong> typically composed of a couple of parts: a <strong>
+                  <u>
+                    <font color="#621A4B">landing page</font>
+                  </u>
+                </strong> and an <strong>
+                  <u>
+                    <font color="#621A4B">exploit page</font>
+                  </u>
+                </strong> with a payload. A <strong>
+                  <u>
+                    <font color="#621A4B">gate</font>
+                  </u>
+                </strong> is also commonly used as an initial point of redirection. Most victims are directed to exploit kits through two means: <strong>
+                  <u>
+                    <font color="#621A4B">compromised websites</font>
+                  </u>
+                </strong> and <strong>
+                  <u>
+                    <font color="#621A4B">malicious advertising</font>
+                  </u>
+                </strong>.</p>
+
+<p>As with <strong>
+                  <u>
+                    <font color="#621A4B">Compromised Websites</font>
+                  </u>
+                </strong>, there is an <strong>
+                  <u>
+                    <font color="#621A4B">iframe</font>
+                  </u>
+                </strong> added somewhere on the web page that renders off screen and this becomes the <strong>
+                  <u>
+                    <font color="#621A4B">redirection points</font>
+                  </u>
+                </strong> to the gate that was being used for the <strong>
+                  <u>
+                    <font color="#621A4B">campaign</font>
+                  </u>
+                </strong> </p>
+
+<p>The <strong>
+                  <u>
+                    <font color="#621A4B">landing page</font>
+                  </u>
+                </strong> then probes the user's system to determine if they are potentially vulnerable and then delivers an <strong>
+                  <u>
+                    <font color="#621A4B">exploit page</font>
+                  </u>
+                </strong> with a <strong>
+                  <u>
+                    <font color="#621A4B">malicious payload</font>
+                  </u>
+                </strong>.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Targeted applications</font>
+                  </u>
+                </strong> often include Adobe Flash Player, Java Runtime Environment, Microsoft Silverlight, and web browsers (usually Internet Explorer) and others</p>
+
+<p>An EK exploit is designed to take advantage of a vulnerable application (Flash Player, Internet Explorer, etc) in order to secretly run malware on a host. For Flash, Java, or Silverlight, the EK sends the exploit as a file, usually in some sort of archive format. For vulnerable web browsers, the exploit is sent as code within the HTML.</p>
+
+
+<p>An <strong>
+                  <u>
+                    <font color="#621A4B">EK’s payload</font>
+                  </u>
+                </strong> is malware designed to infect a Windows computer (an .exe or .dll file). The payload may be a file downloader that retrieves other malware, or it could be the final malware. With more advanced EKs, the payload is sent as an encrypted binary over the network either using simple XOR encryption or an RC4 encryption key. The encrypted binary is then decrypted and executed on the victim’s host.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Vulnerability</font>
+                  </u>
+                </strong> – An unintended flaw in software code that leaves it open to exploitation in the form of unauthorized access or other malicious behavior.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Exploit</font>
+                  </u>
+                </strong> – A file or code that takes advantage of a vulnerability in an application or operating system.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Exploit kit (EK)</font>
+                  </u>
+                </strong> – A server-based framework that uses exploits to take advantage of vulnerabilities in browser-related software applications to infect a client (a Windows desktop or laptop) without the user’s knowledge.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Malware</font>
+                  </u>
+                </strong> – This is the payload delivered by the EK if the exploit is successful. An EK payload is malware designed to infect a Windows computer (an .exe or .dll file).</p>
+
+<p>Those are the basic concepts. An EK uses an exploit that targets a vulnerability. If the exploit is successful, the user’s computer is infected with the malware payload. Two other important terms are:</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Actor</font>
+                  </u>
+                </strong> – An individual or criminal group behind a piece of malware. In the context of cyber security, the term “actor” is associated with a “theater” of war. Since good and bad actors exist in any conflict, you will see “bad actor” or “threat actor” used when referring to various criminal groups behind malware.</p>
+
+<p>
+                <strong>
+                  <u>
+                    <font color="#621A4B">Campaign</font>
+                  </u>
+                </strong> – A series of attacks using an EK and infrastructure to direct victims to that EK.</p>
+
+<p>By itself, an EK will not deliver malware to a system. Somehow, a user must be directed to an EK server before it will deliver any malware. Actors use campaigns to guide victim traffic to an EK.</p>
+
+<p>Actors are most often identified from characteristics of the malware they distribute. Campaigns are most often identified from characteristics of the network traffic before the victim reaches an EK. Actors and campaigns are two different terms. An actor might use one or more campaigns to distribute malware. And more than one actor might use the same campaign to deliver different types of malware.</p>
+
+<p>For example, the actor behind CryptXXX uses multiple campaigns to distribute this ransomware. We have found at least two different campaigns, pseudo-Darkleech and Afraidgate, delivering CryptXXX ransomware.</p>
+
+<p>An example of one campaign used by multiple actors is the EITest campaign. We have noted several different types of malware sent through EITest, indicating several different actors have been using this campaign.</p>
+           </font>
+         </h2>
+       </left>
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>ExploitKit Flow</title>
+      <html>
+      <div id="imagepanel-search" class="splunk-manager splunk-searchmanager" data-require="splunkjs/mvc/searchmanager" data-options="{                         &quot;app&quot;: &quot;QCyberSecurity&quot;,                         &quot;search&quot;:  &quot;| script python custompics custom_pics EK_Flow_2 &quot;,                         &quot;preview&quot;: false                 }"/>
+      <div class="splunk-view" data-require="app/QCyberSecurity/components/imagepanel/imagepanel-random" data-options="{           &quot;managerid&quot;: &quot;imagepanel-search&quot;,           &quot;urlField&quot;: &quot;url&quot;,           &quot;autoField&quot;: false,           &quot;modeField&quot;: &quot;horizontal&quot;,           &quot;adaptiveHeightField&quot;: true,           &quot;pagerField&quot;: false     }"/>
+    </html>
+    </panel>
+  </row>
+</form>

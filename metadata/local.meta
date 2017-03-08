@@ -1,0 +1,911 @@
+[app/install/install_source_checksum]
+version = 6.4.1
+modtime = 1468798275.295994000
+
+[tags/eventtype%3Daccess_combined]
+access = read : [ * ], write : [ admin ]
+export = system
+owner = 200741
+version = 6.4.1
+modtime = 1467779263.516674000
+
+[nav/default]
+version = 6.5.2
+modtime = 1488974551.721697000
+
+[views/mac_lookup]
+version = 6.4.1
+modtime = 1468277523.218776000
+
+[views/endpoint_qcp_linux]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277836.106856000
+
+[views/endpoint_sophos_web]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277878.899217000
+
+[views/endpoint_user_analysis]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277887.055669000
+
+[views/internal_log_monitortemp]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = premchandtheertham
+version = 6.4.1
+modtime = 1468277915.874798000
+
+[views/sec_crowdstrike_hids]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277926.960096000
+
+[views/sec_o365_exchange]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277936.397231000
+
+[views/utility_flight_path]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277953.553210000
+
+[views/web_http_user_agent_analysis]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277967.242498000
+
+[views/web_qualys_Vuln_search]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468277993.132132000
+
+[views/web_qualys_dashboard]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468279149.253222000
+
+[views/web_qualys_knowledgebase]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468289432.108488000
+
+[views/web_qualys_vuln_by_host]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468278091.368373000
+
+[views/web_qualys_vuln_by_ip]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468278098.066228000
+
+[views/network_qcp_nginix_proxy]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468288799.916830000
+
+[views/network_qcp_squid_proxy]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468288827.983295000
+
+[props/ibm%3Asyslog/EXTRACT-dvc]
+access = read : [ * ], write : [ * ]
+owner = 195475
+version = 6.4.1
+modtime = 1468281327.892433000
+
+[views/network_ips_juniper]
+owner = 195475
+version = 6.4.1
+modtime = 1468285343.975007000
+
+[macros/iplocationex%281%29]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468798230.525161000
+
+[macros/exclude_bots%281%29]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468798408.929335000
+
+[macros/exclude_static_content%281%29]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468798418.082808000
+
+[macros/fix_time_token%282%29]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468798426.053540000
+
+[props/access_combined_wcookie/FIELDALIAS-access_combined_wcookie]
+access = read : [ * ], write : [ * ]
+export = none
+owner = 195475
+version = 6.4.1
+modtime = 1468892626.904117000
+
+[props/access_combined_wcookie/EXTRACT-src_ip]
+access = read : [ * ], write : [ * ]
+owner = 195475
+version = 6.4.1
+modtime = 1468799506.349233000
+
+[props/access_combined_wcookie/EXTRACT-http_user_agent%2Chttp_referrer]
+access = read : [ * ], write : [ * ]
+owner = 195475
+version = 6.4.1
+modtime = 1468892586.964263000
+
+[app/ui]
+version = 6.4.2
+modtime = 1469926656.608164000
+
+[app/launcher]
+version = 6.4.2
+modtime = 1469926656.619339000
+
+[app/package/check_for_updates]
+version = 6.4.2
+modtime = 1469926656.623679000
+
+[views/suricata_analysis]
+owner = prem
+version = 6.5.1
+modtime = 1485809042.682676000
+
+[props/pcap]
+owner = admin
+version = 6.4.2
+modtime = 1470160702.076124000
+
+[savedsearches/update%20cidr%20network%20lookup]
+version = 6.4.2
+modtime = 1469945106.799800000
+
+[props/osxcollector_json]
+owner = admin
+version = 6.4.2
+modtime = 1470027048.451563000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fnetwork_traffic_analysis%2FCRIME%2F2015-08-04-Nuclear-EK-infection-traffic%2Feve.json]
+owner = admin
+version = 6.4.2
+modtime = 1470160711.072397000
+
+[props/Suricata_http]
+owner = admin
+version = 6.4.2
+modtime = 1470162870.816888000
+
+[props/access_common/EXTRACT-Infected_host%2Curl%2Chttp_user_agent%2Csrc_ip%2Csrc_port%2Cdest_ip%2Cdest_port]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.4.2
+modtime = 1470163565.253307000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fnetwork_traffic_analysis%2FCRIME%2F...%2Fdns.json]
+owner = admin
+version = 6.4.2
+modtime = 1470164632.145932000
+
+[props/access_common/EXTRACT-url_host%2Curl%2Csrc_ip%2Csrc_port%2Cdest_ip%2Cdest_port]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.4.2
+modtime = 1471209605.594528000
+
+[props/access_common/EXTRACT-event_time]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.4.2
+modtime = 1471209783.584795000
+
+[indexes/thug]
+owner = admin
+version = 6.4.2
+modtime = 1471647110.885807000
+
+[indexes/prem_mac]
+owner = admin
+version = 6.4.2
+modtime = 1471647482.859512000
+
+[props/thug_json]
+owner = admin
+version = 6.4.2
+modtime = 1471666860.289105000
+
+[props/json_thug]
+owner = admin
+version = 6.4.2
+modtime = 1471666925.178598000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fsplunk_logs%2FAlienspyRAT%2F299eb891b1e0338f83dfef7ba8f19a37%2F20160820021540%2Fanalysis%2Fjson%2Fanalysis.json]
+owner = admin
+version = 6.4.2
+modtime = 1471666941.987502000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fsplunk_logs%2FAlienspyRAT%2Fthug.csv]
+owner = admin
+version = 6.4.2
+modtime = 1471669167.651748000
+
+[views/domain_analysis]
+owner = admin
+version = 6.5.1
+modtime = 1485827159.897357000
+
+[props/csv/EXTRACT-malicious_md5%2Cmalicious_url]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.4.2
+modtime = 1471755525.932215000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fnetwork_traffic_analysis%2Fmalware_samples%2F%2A.csv]
+owner = admin
+version = 6.4.3
+modtime = 1471990913.478660000
+
+[transforms/REPORT-dropbox]
+owner = admin
+version = 6.4.3
+modtime = 1475708811.592491000
+
+[props/unknown/REPORT-dropbox]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.4.3
+modtime = 1475708811.985837000
+
+[props/text]
+owner = admin
+version = 6.4.3
+modtime = 1475715225.451248000
+
+[inputs/monitor%3A%2F%2F%2Fopt%2Fthreat_intell%2Ffeeds%2F%2A.csv]
+owner = admin
+version = 6.4.3
+modtime = 1477084290.840949000
+
+[props/csv/EXTRACT-IP%2CCnC%2CPublished%2CCnCDetails]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.4.3
+modtime = 1477086108.318598000
+
+[props/csv/EXTRACT-cncname]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.0
+modtime = 1477096299.391039000
+
+[indexes/ion]
+owner = admin
+version = 6.5.0
+modtime = 1477098530.792076000
+
+[indexes/ioc]
+owner = admin
+version = 6.5.0
+modtime = 1477098539.390321000
+
+[inputs/web_ping%3A%2F%2Fwww.westpac.co.nz]
+owner = admin
+version = 6.5.1
+modtime = 1485944246.634120000
+
+[indexes/win7]
+owner = admin
+version = 6.5.0
+modtime = 1480239336.577089000
+
+[views/phishing_emails]
+owner = admin
+version = 6.5.1
+modtime = 1485777486.342474000
+
+[inputs/monitor%3A%2F%2F%2Fopt%2Fthreat_intell%2Fthreat_feeds]
+owner = admin
+version = 6.5.0
+modtime = 1480412976.907601000
+
+[props/mac_cron]
+owner = admin
+version = 6.5.0
+modtime = 1480417009.268293000
+
+[inputs/monitor%3A%2F%2F%2Fopt%2Fthreat_intell%2Fcron_output.log]
+owner = admin
+version = 6.5.0
+modtime = 1480417019.877560000
+
+[props/csv/EXTRACT-IP%2Cdate_recorded%2Cioc_source]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.0
+modtime = 1480453128.308544000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Frules%2F...%2F%2A.yar]
+owner = admin
+version = 6.5.0
+modtime = 1480484330.493188000
+
+[views/host_ioc_yara]
+owner = admin
+version = 6.5.1
+modtime = 1483567210.493081000
+
+[indexes/endpoint]
+owner = admin
+version = 6.5.0
+modtime = 1480593487.094168000
+
+[props/noriben_csv/EXTRACT-Event_Time%2CProcess_Name%2CPID%2COperation%2CPath%2CResult%2CDetail%2CTID]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.0
+modtime = 1480594287.816506000
+
+[props/reg_shot]
+owner = admin
+version = 6.5.0
+modtime = 1480595530.764869000
+
+[indexes/cuckoo]
+owner = admin
+version = 6.5.0
+modtime = 1480842013.687978000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2FCuckoo%2F...%2F%2A.json]
+owner = admin
+version = 6.5.0
+modtime = 1481001974.930476000
+
+[views/cuckoo]
+owner = admin
+version = 6.5.1
+modtime = 1486181354.362164000
+
+[views/endpoint__noriben]
+owner = admin
+version = 6.5.1
+modtime = 1485773146.064706000
+
+[inputs/monitor%3A%2F%2F%2Fopt%2FNoriben%2FNoriben_Outputs%2F..%2F%2A_timeline.csv]
+owner = admin
+version = 6.5.0
+modtime = 1481540354.746720000
+
+[inputs/monitor%3A%2F%2F%2Fopt%2FNoriben%2FNoriben_Outputs%2FNoriben_12_Dec_16__21_44_44_523000_timeline.csv]
+owner = admin
+version = 6.5.0
+modtime = 1481710938.557099000
+
+[props/phishing_csv/EXTRACT-phish_id%2Curl%2Cphish_detail_url%2Csubmission_time%2Cverified%2Cverification_time%2Conline%2Ctarget]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.0
+modtime = 1481784471.816322000
+
+[transforms/REPORT-phishing_emails]
+owner = admin
+version = 6.5.0
+modtime = 1481790435.785134000
+
+[props/phishing_csv/REPORT-phishing_emails]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.0
+modtime = 1481790436.873611000
+
+[views/cim_dictionary]
+version = 6.5.0
+modtime = 1481794770.772735000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Ffiles_for_analysis%2FPhishEmails%2Fwant.json]
+owner = admin
+version = 6.5.0
+modtime = 1482046611.652644000
+
+[indexes/rules]
+owner = admin
+version = 6.5.0
+modtime = 1482093284.873672000
+
+[views/ids_rules]
+owner = admin
+version = 6.5.0
+modtime = 1482179233.420989000
+
+[props/Noriben_Text]
+owner = admin
+version = 6.5.0
+modtime = 1482177318.296339000
+
+[indexes/noriben]
+owner = admin
+version = 6.5.0
+modtime = 1482177341.053875000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2FNoriben-master%2FSample%2FNoriben_09_Apr_13__20_16_13_368000.txt]
+owner = admin
+version = 6.5.0
+modtime = 1482177350.015592000
+
+[props/ids_rules_doc]
+version = 6.5.0
+modtime = 1482178067.237155000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fsnort_rules%2Fdoc%2Fsignatures%2F1000.txt]
+owner = admin
+version = 6.5.0
+modtime = 1482178106.486116000
+
+[props/_json/EXTRACT-ip]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.1
+modtime = 1482339200.704093000
+
+[indexes/email]
+owner = admin
+version = 6.5.1
+modtime = 1482345160.966400000
+
+[indexes/captipper]
+owner = admin
+version = 6.5.1
+modtime = 1482380530.118299000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fnetwork_traffic_analysis%2FCRIME%2F2016-12-20%20-%20OSIRIS%20VARIANT%20LOCKY%20MALSPAM%20WITH%20EXCEL%20FILES%20CONTAINING%20MALICOUS%20MACROS%2F2016-12-20-Locky-malspam-traffic-example.json]
+owner = admin
+version = 6.5.1
+modtime = 1482380534.314476000
+
+[props/honeypot]
+owner = admin
+version = 6.5.1
+modtime = 1482843283.974686000
+
+[indexes/honeypot]
+owner = admin
+version = 6.5.1
+modtime = 1482843315.866427000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2Fdigital_ocean%2Fhoneypot_logs%2Fmhn-splunk.log]
+owner = admin
+version = 6.5.1
+modtime = 1482843338.778871000
+
+[views/dionaea_analytics]
+version = 6.5.1
+modtime = 1487586941.482392000
+
+[views/overview]
+version = 6.5.1
+modtime = 1488273627.161549000
+
+[views/indicators]
+version = 6.5.1
+modtime = 1488310830.328079000
+
+[views/snortsuricata_analytics]
+version = 6.5.1
+modtime = 1482899529.585766000
+
+[views/kippo_analytics]
+version = 6.5.1
+modtime = 1482905974.280292000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2Fdigital_ocean%2Fhoneypot_logs%2Fauth.log]
+owner = admin
+version = 6.5.1
+modtime = 1482903563.595128000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2Fdigital_ocean%2Fhoneypot_logs%2Faccess.log]
+owner = admin
+version = 6.5.1
+modtime = 1482905461.201884000
+
+[props/noriben_timeline_csv/EXTRACT-Time_of_the_day%2CProcess_Name%2CPID%2COperation%2CPath%2CResult%2CTID]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.1
+modtime = 1483610713.995635000
+
+[tags/source%3D%252FVolumes%252FMac_Development%252FShared%252Fnetwork_traffic_analysis%252FCRIME%252F2016-12-21%2520-%2520PSEUDO-DARKLEECH%2520RIG-V%2520SENDS%2520CERBER%2520RANSOMWARE%252Feve.json]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483683296.756091000
+
+[eventtypes/CERBER_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777342.126166000
+
+[tags/eventtype%3DCERBER_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777343.502123000
+
+[eventtypes/SUNDOWN_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777455.830234000
+
+[tags/eventtype%3DSUNDOWN_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777456.362347000
+
+[eventtypes/RIG_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777432.139507000
+
+[tags/eventtype%3DRIG_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777432.262320000
+
+[eventtypes/CHTHONIC_BANKING_TROJAN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777374.761328000
+
+[tags/eventtype%3DCHTHONIC_BANKING_TROJAN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777375.975324000
+
+[tags/eventtype%3DEITest_Campaign]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707018.766009000
+
+[eventtypes/AFRAIDGATE_CAMPAIGN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707053.142467000
+
+[tags/eventtype%3DAFRAIDGATE_CAMPAIGN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707053.294314000
+
+[eventtypes/EITEST_CAMPAIGN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777320.238100000
+
+[tags/eventtype%3DEITEST_CAMPAIGN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483777320.503486000
+
+[eventtypes/PSEUDODARKLEECH_CAMPAIGN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707101.665950000
+
+[tags/eventtype%3DPSEUDODARKLEECH_CAMPAIGN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707101.722468000
+
+[eventtypes/LOCKY_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707906.638493000
+
+[tags/eventtype%3DLOCKY_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483707906.941127000
+
+[eventtypes/ZEUS_BANKING_TROJAN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708052.188532000
+
+[tags/eventtype%3DZEUS_BANKING_TROJAN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708052.460600000
+
+[eventtypes/GOOTKIT_BANKING_TROJAN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708378.378879000
+
+[tags/eventtype%3DGOOTKIT_BANKING_TROJAN]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708378.581254000
+
+[eventtypes/CRYPTOMIX_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708505.987087000
+
+[tags/eventtype%3DCRYPTOMIX_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708506.327384000
+
+[eventtypes/KAIXIN_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708611.184022000
+
+[tags/eventtype%3DKAIXIN_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483708611.234303000
+
+[eventtypes/ANGLER_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770679.189683000
+
+[tags/eventtype%3DANGLER_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770679.277246000
+
+[eventtypes/BOTNET_MALWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770686.516035000
+
+[tags/eventtype%3DBOTNET_MALWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770687.101072000
+
+[eventtypes/CRYPTOWALL_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770713.763678000
+
+[tags/eventtype%3DCRYPTOWALL_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770714.176344000
+
+[eventtypes/NEUTRINO_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770721.072994000
+
+[tags/eventtype%3DNEUTRINO_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770721.402295000
+
+[eventtypes/TESLACRYPT_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770829.677719000
+
+[tags/eventtype%3DTESLACRYPT_RANSOMWARE]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483770829.748551000
+
+[eventtypes/NUCLEAR_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483818460.666953000
+
+[tags/eventtype%3DNUCLEAR_EXPLOITKIT]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1483818460.722607000
+
+[views/CRIME_FILES]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1485159576.566051000
+
+[indexes/redline]
+owner = admin
+version = 6.5.1
+modtime = 1484547221.743976000
+
+[indexes/memory]
+owner = admin
+version = 6.5.1
+modtime = 1484564911.793757000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2Fnetwork_traffic_analysis%2FCRIME%2F2017-01-13-MALSPAM%20SPREADING%20CERBER%20RANSOMWARE%2F2017-01-13-Cerber-from-malspam-memory_timeline.csv]
+owner = admin
+version = 6.5.1
+modtime = 1484634520.251655000
+
+[props/timeline-csv/EXTRACT-category]
+access = read : [ * ], write : [ admin ]
+owner = admin
+version = 6.5.1
+modtime = 1484636878.463363000
+
+[inputs/monitor%3A%2F%2F%2FVolumes%2FMac_Development%2FShared%2FRedline%2FStandardCollector%2FSessions%2FAnalysisSession1%2FAudits%2FWIN-1TGVA1I4234%2F20170111151524%2F_manifest.9nl90HKroZSbiB6lCD1RlL.json]
+owner = admin
+version = 6.5.1
+modtime = 1484717180.659626000
+
+[tags/eventtype%3DNY_Sheep_Client-04]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1488274058.144427000
+
+[tags/eventtype%3DAUS_Sheep_Client-01]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1488274022.548228000
+
+[tags/eventtype%3DBLR_Sheep_Client-02]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.5.1
+modtime = 1488274035.700665000
+
+[savedsearches/HoneyPot%20-%20Top%20Attackers]
+owner = admin
+version = 6.5.2
+modtime = 1488834000.507810000
+
+[views/endpoint_win_auth]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 6.5.2
+modtime = 1488974026.404801000
+
+[views/endpoint_win_grp_mgnt]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 6.5.2
+modtime = 1488974041.782274000
+
+[views/endpoint_windows_account_mgnt]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 6.5.2
+modtime = 1488974056.676691000
+
+[views/home_1]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 6.5.2
+modtime = 1488974075.046299000

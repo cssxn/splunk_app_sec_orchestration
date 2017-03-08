@@ -1,0 +1,349 @@
+<form script="autodiscover.js">
+  <label>NIDS</label>
+  <description>Splunk Dashboard for Suricata IDS Events</description>
+  <fieldset submitButton="true" autoRun="true">
+    <input type="time" token="timestamp" searchWhenChanged="true">
+      <label>Time picker</label>
+      <default>
+        <earliest>0</earliest>
+        <latest></latest>
+      </default>
+    </input>
+    <input type="multiselect" token="crimename">
+      <label>Crime Name</label>
+      <choice value="*">All_CRIME</choice>
+      <search>
+        <query>index=suricata  sourcetype=pcap source=*eve.json |  eval sourceparams=split(source,"/") | eval crimename=mvindex(sourceparams,6)  | stats count by crimename | sort -crimename</query>
+        <earliest>@y</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>crimename</fieldForLabel>
+      <fieldForValue>crimename</fieldForValue>
+      <delimiter> </delimiter>
+    </input>
+    <input type="text" token="keyword">
+      <label>Include</label>
+      <default>*</default>
+    </input>
+    <input type="text" token="exclude">
+      <label>Exclude</label>
+      <default>*twitter.com* OR *facebook* OR *google* OR *bing.com* OR  *akamai*</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Compromise Mechanism</title>
+        <search>
+          <query>index="suricata"  source="*$crimename$*"   sourcetype=pcap  tag::http.hostname="Comprimised_Site"  | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0 | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Gate</title>
+        <search>
+          <query>index="suricata"  source="*$crimename$*"   sourcetype=pcap  tag::http.hostname="gate"  | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0 | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>EK Landing Page</title>
+        <search>
+          <query>index="suricata"  source="*$crimename$*"   sourcetype=pcap  tag::http.hostname="*Landing_Page*" | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0 | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Post-Infection-Traffic</title>
+        <search>
+          <query>index="suricata"  source="*$crimename$*"   sourcetype=pcap  tag::http.hostname="*Post_Infection_Traffic*"  | stats count by http.hostname | appendpipe [stats count | eval Result="NOT FOUND"  | where count=0   | fields - count] | table http.hostname Result</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>High Level Overview</title>
+      <viz type="parallel_coordinates_app.parallel_coordinates">
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*" $keyword$   NOT "$exclude$"  | stats  count by  src_ip event_type http.http_content_type http.hostname  dest_ip        | fields  - count</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="parallel_coordinates_app.parallel_coordinates.colorMode">categorical</option>
+        <option name="parallel_coordinates_app.parallel_coordinates.hideTicks">false</option>
+        <option name="parallel_coordinates_app.parallel_coordinates.maxCategories">35</option>
+        <option name="parallel_coordinates_app.parallel_coordinates.maxColor">#d93f3c</option>
+        <option name="parallel_coordinates_app.parallel_coordinates.minColor">#25c2E8</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>HTTP Traffic</b>
+           </font>
+         </h2>
+       </center>
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="viz_donut_c3.c3donut">
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*" $keyword$  NOT "$exclude$" NOT (http.hostname="*google.com*" OR http.hostname="*twitter.com*" OR "*facebook*" OR http.hostname="*google*" OR http.hostname="*bing*")  | bin _time span=10m | stats count  by http.hostname</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="viz_donut_c3.c3donut.expand">1</option>
+        <option name="viz_donut_c3.c3donut.label_show">true</option>
+        <option name="viz_donut_c3.c3donut.label_value">ratio</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">true</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">default</option>
+        <option name="viz_donut_c3.c3donut.width">40</option>
+      </viz>
+    </panel>
+    <panel>
+      <title>File Type</title>
+      <viz type="viz_donut_c3.c3donut">
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*" $keyword$  fileinfo.filename=* NOT "$exclude$"   | stats count by event_type | RENAME count as Event_type</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="viz_donut_c3.c3donut.expand">true</option>
+        <option name="viz_donut_c3.c3donut.label_show">true</option>
+        <option name="viz_donut_c3.c3donut.label_value">ratio</option>
+        <option name="viz_donut_c3.c3donut.legend_position">bottom</option>
+        <option name="viz_donut_c3.c3donut.legend_show">1</option>
+        <option name="viz_donut_c3.c3donut.tooltip_show">true</option>
+        <option name="viz_donut_c3.c3donut.tooltip_value">default</option>
+      </viz>
+    </panel>
+    <panel>
+      <viz type="wordcloud_app.wordcloud">
+        <title>Tags (Possible)</title>
+        <search>
+          <query>index="suricata" sourcetype="pcap" source="*$crimename$*"   | stats count by tag::eventtype</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wordcloud_app.wordcloud.alignmentMode">horizontal</option>
+        <option name="wordcloud_app.wordcloud.backgroundColor">#fff</option>
+        <option name="wordcloud_app.wordcloud.colorBy">colorMode</option>
+        <option name="wordcloud_app.wordcloud.colorMode">categorical</option>
+        <option name="wordcloud_app.wordcloud.maxColor">#f7bc38</option>
+        <option name="wordcloud_app.wordcloud.minColor">#6db7c6</option>
+        <option name="wordcloud_app.wordcloud.numOfBins">1</option>
+        <option name="wordcloud_app.wordcloud.splunkTastic">false</option>
+        <option name="wordcloud_app.wordcloud.useColors">true</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>Files Downloaded</b>
+           </font>
+         </h2>
+       </center>
+     </html>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*" $keyword$  fileinfo.filename=* NOT ( http.hostname="*facebook*" OR http.hostname="*bing*" OR http.hostname="*youtube*" OR http.hostname="*microsoft*" OR fileinfo.filename="*.css" OR fileinfo.filename="*.eot" OR fileinfo.filename="*.woff" OR fileinfo.filename="/" OR fileinfo.filename="*.jpg" OR fileinfo.filename="*.png" OR fileinfo.filename="*.gif" OR fileinfo.filename="*.woff2")  | stats values(fileinfo.filename) AS "Files Downloaded" values(http.http_content_type) AS Content_type by http.hostname src_ip | RENAME http.hostname AS "Malicious Domain"</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*"  $keyword$ NOT "$exclude$"    | bin _time span=10m | stats values(http.http_content_type) AS Content_Type by http.hostname  | table http.hostname Content_Type | eval Content_Type=mvjoin(Content_Type, " , ")</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>Alerts Generated</b>
+           </font>
+         </h2>
+       </center>
+     </html>
+    </panel>
+  </row>
+  <row id="tabs_ids">
+    <panel>
+      <table>
+        <search>
+          <query>index="suricata" sourcetype="pcap" source="*$crimename$*"    event_type=alert    | iplocation src_ip | iplocation src_ip | stats values(alert.signature) by alert.category</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+        <drilldown>
+          <condition field="alert.signature">
+            <set token="alert.signature">$row.alert.signature$</set>
+          </condition>
+        </drilldown>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Sequence of Events (As Recorded in PCAP File)</title>
+        <search>
+          <query>index="suricata"  source="*$crimename$*"   sourcetype=pcap  event_type!=flow "http.hostname"="*" | table _time  src_ip dest_ip http.hostname  http.status http.http_content_type fileinfo.filename http.http_method  http.http_refer http.url  fileinfo.size  | sort _time</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>DNS Traffic</b>
+           </font>
+         </h2>
+       </center>
+     </html>
+    </panel>
+  </row>
+  <row id="tabs_dns">
+    <panel>
+      <table>
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*"  | search  NOT ("$exclude$" OR "*akamai*" OR "*bing*")  event_type=dns   | iplocation dns.rdata | stats values(dns.type) AS DNS_Type values(dns.rdata) AS NameServer_IP values(Country) AS NameServer_Location  by dns.rrname  dns.rrtype</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="count">20</option>
+        <option name="dataOverlayMode">none</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>TLS Traffic</b>
+           </font>
+         </h2>
+       </center>
+     </html>
+    </panel>
+    <panel>
+      <html>        
+       <center>
+         <h2 style="background-color:grey">
+           <font size="5" color="white">
+             <b>SMTP Traffic</b>
+           </font>
+         </h2>
+       </center>
+     </html>
+    </panel>
+  </row>
+  <row id="tabs_tls">
+    <panel>
+      <table>
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*" event_type=tls | stats values(tls.subject) AS TLS_Subject by  tls.sni | RENAME tls.sni AS "TLS"</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <search>
+          <query>index="suricata"  sourcetype="pcap" source="*$crimename$*"  event_type=smtp | table timestamp pcap_cnt event_type src_ip email.from email.url{} email.url{} smtp.helo smtp.rcpt_to{} | RENAME smtp.helo AS email_domain| sort timestamp</query>
+          <earliest>$timestamp.earliest$</earliest>
+          <latest>$timestamp.latest$</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>ExploitKit Flow</title>
+      <html>
+      <div id="imagepanel-search" class="splunk-manager splunk-searchmanager" data-require="splunkjs/mvc/searchmanager" data-options="{                         &quot;app&quot;: &quot;QCyberSecurity&quot;,                         &quot;search&quot;:  &quot;| script python custompics custom_pics &quot;,                         &quot;preview&quot;: false                 }"/>
+      <div class="splunk-view" data-require="app/QCyberSecurity/components/imagepanel/imagepanel-random" data-options="{           &quot;managerid&quot;: &quot;imagepanel-search&quot;,           &quot;urlField&quot;: &quot;url&quot;,           &quot;autoField&quot;: false,           &quot;modeField&quot;: &quot;horizontal&quot;,           &quot;adaptiveHeightField&quot;: true,           &quot;pagerField&quot;: true     }"/>
+    </html>
+    </panel>
+  </row>
+</form>

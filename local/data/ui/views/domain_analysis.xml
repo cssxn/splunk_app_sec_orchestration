@@ -1,0 +1,193 @@
+<form>
+  <label>URLAnalysis</label>
+  <fieldset submitButton="false" autoRun="true">
+    <input type="dropdown" token="threat_source" searchWhenChanged="true">
+      <label>threat_source</label>
+      <search>
+        <query>index=thug (sourcetype=thug_json OR sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/*" |  eval sourceparams=split(source,"/") | eval threat_source=mvindex(sourceparams,6) | search NOT threat_source="thug.csv"  | dedup threat_source | table threat_source</query>
+        <earliest>-60d@d</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>threat_source</fieldForLabel>
+      <fieldForValue>threat_source</fieldForValue>
+      <default>da5cb11f78b6ace988be712e69665504</default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>Domain Analysed</title>
+        <search>
+          <query>index=ioc  sourcetype=csv  source="*malware_samples/*" source="*/malware_samples/thug.csv" | search malicious_md5="$threat_source$*" | table malicious_url value icon_value color_value</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="rangeColors">["0x621A4B","0xd93f3c"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+    <panel>
+      <title>EK Type (Possible)</title>
+      <single>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*" behavior{}.description="*URL Classifier*" | rex field=behavior{}.description "\(Rule:\s(?P&lt;Ek_type&gt;.[^)]+)" | top Ek_type | table Ek_type value icon_value color_value</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Online Status</title>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*" "behavior{}.description"=*  | RENAME "behavior{}.description" AS status | eval online_status=case(status LIKE "%Status: 200%","Online", status like "%Status: 3%","Redirects",  status LIKE "%Status: 4%","Offline", status LIKE "%Status: 5%","Offline") | table online_status  value icon_value color_value</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="rangeColors">["0x621A4B","0x621A4B"]</option>
+        <option name="rangeValues">[0]</option>
+        <option name="unit">- During the analysis</option>
+        <option name="useColors">1</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Graph View</title>
+      <viz type="parallel_coordinates_app.parallel_coordinates">
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*" | stats count by  url connections{}.method connections{}.destination  | fields  - count</query>
+          <earliest>0</earliest>
+          <latest></latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="height">484</option>
+      </viz>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>File Downloads by mime type</title>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*"  | stats count by locations{}.mimetype</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>File Downloads by contents type</title>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*"  | stats count by locations{}.content-type</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Destination by Category</title>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*" | stats values(connections{}.destination) AS Destination values(connections{}.method) AS connection_method</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Sequence - Behaviour Analysis</title>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*"  | stats values(behavior{}.description) by behavior{}.timestamp | sort behavior{}.timestamp</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="count">10</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="rowNumbers">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <event>
+        <title>Behavior</title>
+        <search>
+          <query>index=thug (sourcetype=thug_json OR  sourcetype=json OR sourcetype=csv) source="/Volumes/Mac_Development/Shared/network_traffic_analysis/malware_samples/$threat_source$*"</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="count">10</option>
+        <option name="list.drilldown">full</option>
+        <option name="list.wrap">1</option>
+        <option name="maxLines">5</option>
+        <option name="raw.drilldown">full</option>
+        <option name="rowNumbers">0</option>
+        <option name="table.drilldown">all</option>
+        <option name="table.wrap">1</option>
+        <option name="type">raw</option>
+        <fields>["host","source","sourcetype"]</fields>
+      </event>
+    </panel>
+  </row>
+</form>
