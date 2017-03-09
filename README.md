@@ -1,5 +1,5 @@
 # spunk_app_sec_orchestration
-Cyber Security Orchestration app for Splunk is an "splunk app" for collecting reports as logs from various cyber security tools like Suricata, Cucko Sandbox, Noriben Sandbox, Volatiity, Rekall, Thug, Captipper, Honeypots and various tools/custom scripts from SIFT and REMNux. 
+Cyber Security Orchestration app is an "splunk app" for collecting reports as logs from various cyber security tools like Suricata, Cucko Sandbox, Noriben Sandbox, Volatiity, Rekall, Thug, Captipper, Honeypots and various tools/custom scripts from SIFT and REMNux. 
 
 This app can be used by DFIR and REM teams who analyses various malicious crime files/ artifacts and can use this app to search, report and share the findings with other teams (like SOC). As a repository for all files analysed which can be searched upon using powerful splunk commands. 
 
