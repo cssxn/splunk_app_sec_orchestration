@@ -21,7 +21,7 @@ Security Tools
   * Rue repository (Snort and Yara Rules)
   * JIRA dashboards to view the tickets as workflow engine.
   
-The app is in early versions of its development cycle. Below are the ongoing tO_DO tasks
+The app is in early versions of its development cycle. Below are the ongoing To Do tasks
 
   * More custom workflows to link various reports
   * CIM Compatible
